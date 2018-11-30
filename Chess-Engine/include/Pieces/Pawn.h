@@ -8,8 +8,8 @@ class Pawn : public Piece
 {
 public:
   Pawn(bool is_white, int x, int y);
-  virtual bool invalid_move(const Move move, const ChessBoard *board)  const;
-  std::vector<Move> get_possible_moves()  const;
+  virtual bool invalid_move(const PieceMove move, const ChessBoard *board) const;
+  std::vector<PieceMove> get_possible_moves() const;
 private:
 	bool is_first_move = true;
 };

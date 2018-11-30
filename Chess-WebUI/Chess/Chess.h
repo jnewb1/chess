@@ -17,13 +17,15 @@ public:
     board = new ChessBoard(board_in);
     PlayerFactory factory;
     black = factory.Create("AI_Fast", false);
-    white = factory.Create("AI_Fast", true);
+    white = factory.Create("Web", true);
   }
   bool play_one_round();
   void play_game();
   void get_board(std::string(*board_str)[BOARD_SIZE][BOARD_SIZE]);
-  bool preform_move(Move move, bool is_white);
+  bool preform_move(ChessBoard::GameMove move, bool is_white);
   void UpdateServer();
+
+  bool preform_move(Move move, bool is_white);
 
 private:
 

@@ -1,4 +1,5 @@
 #include "Pieces/Knight.h"
+#include "ChessBoard\ChessBoard.h"
 
 Knight::Knight(bool is_white, int x, int y) : Piece(is_white ? KNIGHT_W : KNIGHT_B, x, y, 30)
 {
@@ -16,23 +17,23 @@ Knight::Knight(bool is_white, int x, int y) : Piece(is_white ? KNIGHT_W : KNIGHT
 		};
 }
 
-bool Knight::invalid_move(const Move move, const ChessBoard *board)  const
+bool Knight::invalid_move(const PieceMove move, const ChessBoard *board)  const
 {
     return invalid_move_most(move, board);
 }
 
-std::vector<Move> Knight::get_possible_moves()  const
+std::vector<Piece::PieceMove> Knight::get_possible_moves()  const
 {
-    std::vector<Move> moves(0); //8 possible moves for knight
+    std::vector<PieceMove> moves(0); //8 possible moves for knight
 
-	moves.push_back(Move({ piece, y, x, y + 2, x + 1 }));
-	moves.push_back(Move({ piece, y, x, y + 1, x + 2 }));
-	moves.push_back(Move({ piece, y, x, y - 1, x + 2 }));
-	moves.push_back(Move({ piece, y, x, y - 2, x + 1 }));
-	moves.push_back(Move({ piece, y, x, y + 2, x - 1 }));
-	moves.push_back(Move({ piece, y, x, y + 1, x - 2 }));
-	moves.push_back(Move({ piece, y, x, y - 1, x - 2 }));
-	moves.push_back(Move({ piece, y, x, y - 2, x - 1 }));
+	moves.push_back(PieceMove({   x + 1, y + 2, }));
+	moves.push_back(PieceMove({ x + 2, y + 1, }));
+	moves.push_back(PieceMove({ x + 2, y - 1, }));
+	moves.push_back(PieceMove({ x + 1, y - 2, }));
+	moves.push_back(PieceMove({ x - 1, y + 2, }));
+	moves.push_back(PieceMove({ x - 2, y + 1, }));
+	moves.push_back(PieceMove({ x - 2, y - 1, }));
+	moves.push_back(PieceMove({ x - 1, y - 2, }));
 
     return moves;
 }

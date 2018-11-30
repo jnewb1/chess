@@ -15,43 +15,34 @@ I random_element(std::vector<I> v)
 
 //0,0 is the bottom left of the board
 //White always starts at the bottom of the board
-Move RandomPlayer::request_move(const std::string board_in[BOARD_SIZE][BOARD_SIZE])
+GameMove RandomPlayer::request_move(ChessBoard &board)
 {
-    ChessBoard *board = new ChessBoard(board_in);
-	std::vector<Move> moves(0);
-	board->get_valid_moves(this->get_is_white(), moves);
+	std::vector<GameMove> moves(0);
+	board.get_valid_moves(this->get_is_white(), moves);
 
 	valid_move_count = moves.size();
     
 	if (moves.size() < 1) {
-		return Move({ "quit", 0, 0, 0, 0 });
+		return GameMove();
 	}
-	delete board;
     return random_element(moves);
-
-}
-
-//Prev move was illegal, request new move
-Move RandomPlayer::request_move(const std::string board_in[BOARD_SIZE][BOARD_SIZE], const Move *const illegal_move)
-{
-    return request_move(board_in);
 }
 
 //send back a string as defined by the macros above for the what the pawn should become
 //can be a queen, bishop, knight or rook
-std::string RandomPlayer::request_queening(const std::string[BOARD_SIZE][BOARD_SIZE])
+std::string RandomPlayer::request_queening(const ChessBoard &board) const
 {
-    if (get_is_white())
-    {
-        return QUEEN_W;
-    }
-    else
-    {
-        return QUEEN_B;
-    }
+	if (get_is_white())
+	{
+		return QUEEN_W;
+	}
+	else
+	{
+		return QUEEN_B;
+	}
 }
 
-json RandomPlayer::get_player_debug() {
+json RandomPlayer::get_player_debug() const {
 	json ret;
 	ret["valid_move_count"] = valid_move_count;
 	return ret;

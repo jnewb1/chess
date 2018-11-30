@@ -16,11 +16,10 @@ public:
   ~AIPlayer()
   {
   }
-  Move request_move_thread(int depth, ChessBoard board, std::atomic_bool & stop);
-  Move request_move(const std::string[BOARD_SIZE][BOARD_SIZE]);
-  Move request_move(const std::string[BOARD_SIZE][BOARD_SIZE], const Move *const illegal_move);
-  std::string request_queening(const std::string[BOARD_SIZE][BOARD_SIZE]);
-  json get_player_debug();
+  std::pair<GameMove, int> request_move_thread(int depth, ChessBoard &board, const std::atomic_bool & stop);
+  virtual std::string request_queening(const ChessBoard &board) const;
+  virtual GameMove request_move(ChessBoard &board);
+  virtual json get_player_debug() const;
 private:
 	int move_time_sec = 60;
 	int best_move_score;

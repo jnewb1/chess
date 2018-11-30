@@ -15,7 +15,7 @@ class PlayerFactory
         }
 		if (type == "AI_Fast")
 		{
-			return new AIPlayer(is_white, 10);
+			return new AIPlayer(is_white, 20);
 		}
         if (type == "Random")
         {

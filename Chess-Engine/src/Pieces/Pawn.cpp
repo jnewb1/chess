@@ -1,4 +1,5 @@
 #include "Pieces/Pawn.h"
+#include "ChessBoard\ChessBoard.h"
 
 Pawn::Pawn(bool is_white, int x, int y) : Piece(is_white ? PAWN_W : PAWN_B, x, y, 10)
 {
@@ -14,40 +15,40 @@ Pawn::Pawn(bool is_white, int x, int y) : Piece(is_white ? PAWN_W : PAWN_B, x, y
 } };
 }
 
-bool Pawn::invalid_move(const Move move, const ChessBoard *board) const
+bool Pawn::invalid_move(const PieceMove move, const ChessBoard *board) const
 {
 	bool invalid = invalid_move_all(move, board);
 	if (invalid) {
 		return invalid;
 	}
-	if (move.current_col != move.new_col) {
+	if (x != move.x) {
 		// If pawn tries to attack diagonally, there has to be a piece there
-		if (board->get(move.new_col, move.new_row)->is_empty()) {
+		if (board->get(move.x, move.y)->is_empty()) {
 			return true;
 		}
 	}
 	else {
 		// If pawn tries to move forward, there cannot be a piece there
-		if (!board->get(move.new_col, move.new_row)->is_empty()) {
+		if (!board->get(move.x, move.y)->is_empty()) {
 			return true;
 		}
 	}
 	return invalid;
 }
 
-std::vector<Move> Pawn::get_possible_moves() const
+std::vector<Piece::PieceMove> Pawn::get_possible_moves() const
 {
-	std::vector<Move> moves(0); //1 possible moves for Pawn (typical)
+	std::vector<PieceMove> moves(0); //4 possible moves for Pawn
 	int dir = is_white() ? 1 : -1;
 
-	moves.push_back(Move({piece, y, x, y+dir,   x }));
-	moves.push_back(Move({ piece, y, x, y + dir,   x-1 }));
-	moves.push_back(Move({ piece, y, x, y + dir,   x + 1 }));
+	moves.push_back(PieceMove({ x  ,   y + dir, }));
+	moves.push_back(PieceMove({ x - 1 ,y + dir, }));
+	moves.push_back(PieceMove({ x + 1, y + dir, }));
 
 	// Opening move can move two spaces!
 	if (y == 1 || y == 6) {
-		moves.push_back(Move({ piece, y, x, y + 2*dir,   x }));
+		moves.push_back(PieceMove({ x, y + 2 * dir }));
 	}
 
-    return moves;
+	return moves;
 }

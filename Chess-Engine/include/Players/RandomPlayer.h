@@ -12,8 +12,8 @@ public:
   ~RandomPlayer()
   {
   }
-  Move request_move(const std::string[BOARD_SIZE][BOARD_SIZE]);
-  Move request_move(const std::string[BOARD_SIZE][BOARD_SIZE], const Move *const illegal_move);
-  std::string request_queening(const std::string[BOARD_SIZE][BOARD_SIZE]);
+  virtual std::string request_queening(const ChessBoard &board) const;
+  virtual GameMove request_move(ChessBoard &board);
+  virtual json get_player_debug() const;
   json get_player_debug();
 };

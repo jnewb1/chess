@@ -1,4 +1,5 @@
 #include "Pieces/Rook.h"
+#include "ChessBoard\ChessBoard.h"
 
 Rook::Rook(bool is_white, int x, int y) : Piece(is_white ? ROOK_W : ROOK_B, x, y, 50)
 {
@@ -15,19 +16,19 @@ Rook::Rook(bool is_white, int x, int y) : Piece(is_white ? ROOK_W : ROOK_B, x, y
 } };
 }
 
-bool Rook::invalid_move(const Move move, const ChessBoard *board)  const
+bool Rook::invalid_move(const PieceMove move, const ChessBoard *board)  const
 {
     return invalid_move_all(move, board);
 }
 
-std::vector<Move> Rook::get_possible_moves()  const
+std::vector<Piece::PieceMove> Rook::get_possible_moves() const
 {
-    std::vector<Move> moves(0); //8 possible moves for Rook
+    std::vector<PieceMove> moves(0); //8 possible moves for Rook
 	for (int x1 = -8; x1 < 8; x1++) {
-		moves.push_back(Move({ piece, y, x, y, x1 }));
+		moves.push_back(PieceMove({ x1, y }));
 	}
 	for (int y1 = -8; y1 < 8; y1++) {
-		moves.push_back(Move({ piece, y, x, y1, x }));
+		moves.push_back(PieceMove({ x, y1 }));
 	}
 
     return moves;

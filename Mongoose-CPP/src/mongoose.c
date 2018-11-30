@@ -3425,7 +3425,7 @@ int mg_check_ip_acl(const char *acl, uint32_t remote_ip) {
   return allowed == '+';
 }
 
-/* Move data from one connection to another */
+/* ChessBoard::GameMove data from one connection to another */
 void mg_forward(struct mg_connection *from, struct mg_connection *to) {
   mg_send(to, from->recv_mbuf.buf, from->recv_mbuf.len);
   mbuf_remove(&from->recv_mbuf, from->recv_mbuf.len);
@@ -8284,7 +8284,7 @@ static void mg_http_send_options(struct mg_connection *nc) {
   mg_printf(nc, "%s",
             "HTTP/1.1 200 OK\r\nAllow: GET, POST, HEAD, CONNECT, OPTIONS"
 #if MG_ENABLE_HTTP_WEBDAV
-            ", MKCOL, PUT, DELETE, PROPFIND, MOVE\r\nDAV: 1,2"
+            ", MKCOL, PUT, DELETE, PROPFIND, ChessBoard::GameMove\r\nDAV: 1,2"
 #endif
             "\r\n\r\n");
   nc->flags |= MG_F_SEND_AND_CLOSE;
@@ -8381,7 +8381,7 @@ MG_INTERNAL void mg_send_http_file(struct mg_connection *nc, char *path,
     mg_handle_delete(nc, opts, path);
   } else if (!mg_vcmp(&hm->method, "PUT")) {
     mg_handle_put(nc, path, hm);
-  } else if (!mg_vcmp(&hm->method, "MOVE")) {
+  } else if (!mg_vcmp(&hm->method, "ChessBoard::GameMove")) {
     mg_handle_move(nc, opts, path, hm);
 #if MG_ENABLE_FAKE_DAVLOCK
   } else if (!mg_vcmp(&hm->method, "LOCK")) {
@@ -9563,7 +9563,7 @@ MG_INTERNAL int mg_is_dav_request(const struct mg_str *s) {
     "DELETE",
     "MKCOL",
     "PROPFIND",
-    "MOVE"
+    "ChessBoard::GameMove"
 #if MG_ENABLE_FAKE_DAVLOCK
     ,
     "LOCK",

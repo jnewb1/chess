@@ -17,17 +17,11 @@ bool Chess::play_one_round()
 {
 	Move move;
 	std::string board_str[BOARD_SIZE][BOARD_SIZE];
-
+	UpdateServer();
 	do {
-		cout << "Black Player" << endl;
+		cout << "White Player" << endl;
 		board->get_board(&board_str);
 		move = white->request_move(board_str);
-		if (move.piece == "quit") {
-			cout << "White Player Resigns..." << endl;
-			cout << "Black Player Wins!" << endl;
-			UpdateServer();
-			return true;
-		}
 	} while (!preform_move(move, true));
 	UpdateServer();
 	if (board->get_game_over()) {
@@ -35,15 +29,9 @@ bool Chess::play_one_round()
 	}
 
 	do {
-		cout << "White Player" << endl;
+		cout << "Black Player" << endl;
 		board->get_board(&board_str);
 		move = black->request_move(board_str);
-		if (move.piece == "quit") {
-			cout << "Black Player Resigns..." << endl;
-			cout << "White Player Wins!" << endl;
-			UpdateServer();
-			return true;
-		}
 	} while (!preform_move(move, false));
 	UpdateServer();
 	if (board->get_game_over()) {
@@ -61,17 +49,22 @@ void Chess::UpdateServer() {
 	server.WaitState(delay);
 }
 
-bool Chess::preform_move(Move move, bool is_white)
+bool Chess::preform_move(Move move, bool is_white) {
+	return preform_move(GameMove({ board->get(move.current_col, move.current_row), move.current_col, move.current_row, board->get(move.new_col, move.new_row), move.new_col, move.new_row }), is_white);
+}
+
+bool Chess::preform_move(GameMove move , bool is_white)
 {
-	std::vector<Move> moves;
+	// Preform move checking!
+	std::vector<ChessBoard::GameMove> moves;
 	board->get_valid_moves(is_white, moves);
 	for( auto  move_f : moves){
-		if (move_f.current_col == move.current_col && move_f.current_row == move.current_row &&
-			move_f.new_col == move.new_col         && move_f.new_row == move.new_row) {
-			return board->move(move.current_col, move.current_row, move.new_col, move.new_row);
+		if (move_f == move) {
+			return board->move(move);
 		}
-
 	}
+	
+	//return board->move(move);
 	return false;
 }
 
@@ -79,8 +72,8 @@ void Chess::play_game() {
 	UpdateServer();
 	while(true) {
 		if (play_one_round()) {
+			cout << "Game Over" << endl;
 			break;
-
 		}
 	}
 }

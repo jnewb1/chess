@@ -39,7 +39,7 @@ class Player
 	//White always starts at the bottom of the board
 	virtual Move request_move(const std::string[BOARD_SIZE][BOARD_SIZE]) = 0;
 
-	//Prev move was illegal, request new move
+	//Prev ChessBoard::GameMove was illegal, request new ChessBoard::GameMove
 	virtual Move request_move(const std::string[BOARD_SIZE][BOARD_SIZE], const Move *const illegal_move) = 0;
 
 	//send back a string as defined by the macros above for the what the pawn should become
@@ -55,4 +55,4 @@ class Player
 	bool is_white = false;
 };
 
-//You have 1 minute to make return a move, or else you lose automatically
+//You have 1 minute to make return a ChessBoard::GameMove, or else you lose automatically

@@ -12,7 +12,7 @@ void board_default(std::string board[BOARD_SIZE][BOARD_SIZE])
 	
 	board[0][0] = ROOK_W;
 	board[7][0] = ROOK_W;
-
+	
 	board[0][7] = ROOK_B;
 	board[7][7] = ROOK_B;
 
@@ -51,6 +51,7 @@ void board_default(std::string board[BOARD_SIZE][BOARD_SIZE])
 	board[5][6] = PAWN_B;
 	board[6][6] = PAWN_B;
 	board[7][6] = PAWN_B;
+	
 	
 
 }

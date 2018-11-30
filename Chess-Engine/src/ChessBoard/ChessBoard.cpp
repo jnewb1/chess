@@ -2,11 +2,10 @@
 #include <iostream>
 #include <fstream>
 
-#include "Pieces/PieceFactory.h"
+
 
 
 ChessBoard::ChessBoard(const ChessBoard &board_in) {
-	PieceFactory factory;
 	for (int x = 0; x < BOARD_SIZE; x++)
 	{
 		for (int y = 0; y < BOARD_SIZE; y++)
@@ -17,9 +16,23 @@ ChessBoard::ChessBoard(const ChessBoard &board_in) {
 	}
 }
 
+ChessBoard & ChessBoard::operator=(const ChessBoard & other)
+{
+	if (this != &other) {
+		for (int x = 0; x < BOARD_SIZE; x++)
+		{
+			for (int y = 0; y < BOARD_SIZE; y++)
+			{
+				Piece* piece_in = other.get(x, y);
+				board[x][y] = factory.Create(piece_in);
+			}
+		}
+	}
+	return *this;
+}
+
 ChessBoard::ChessBoard()
 {
-	PieceFactory factory;
     for (int x = 0; x < BOARD_SIZE; x++)
     {
         for (int y = 0; y < BOARD_SIZE; y++)
@@ -53,7 +66,6 @@ ChessBoard::ChessBoard(const std::string board_in[BOARD_SIZE][BOARD_SIZE])
 }
 void ChessBoard::set(int x, int y, Piece *set)
 {
-	//delete board[x][y];
     board[x][y] = set;
 }
 
@@ -61,23 +73,38 @@ Piece *ChessBoard::get(int x, int y) const
 {
 	return board[x][y];
 }
-
-bool ChessBoard::move(int old_x, int old_y, int new_x, int new_y) {
-	PieceFactory factory;
-	Piece* moving_piece = get(old_x, old_y);
-	if (moving_piece->is_empty()) {
-		return false;
-	}
-	moving_piece->set(new_x, new_y);
-	//delete board[old_x][old_y];
-	set(old_x, old_y, factory.Create("", old_x, old_y));
-	delete board[new_x][new_y];
-	set(new_x, new_y, moving_piece);
+/*
+	Preform a move
+		- Moves a piece to its new position
+*/
+bool ChessBoard::move(GameMove &move) {
+	set(move.x, move.y, factory.Create("", move.x, move.y));
+	set(move.tx, move.ty, move.p);
+	move.p->set(move.tx, move.ty);
 	CheckQueening();
 	return true;
 }
+/*
+	Undo a move.
+		- Moves a piece back to its original position
+		- Moves the piece that was taken into its original position
+*/
+bool ChessBoard::undo_move(GameMove &move)
+{
+	// signal that the move was undone so the piece isn't deleted
+	move.undone = true;
+	// Delete the empty square we created in the place of the piece
+	delete get(move.x, move.y);
+	// Move piece to original position
+	set(move.x, move.y, move.p);
+	move.p->set(move.x, move.y);
+	// Move the taken piece back to its position
+	set(move.tx, move.ty, move.tp);
+	move.tp->set(move.tx, move.ty);
+	return false;
+}
 
-void ChessBoard::CheckQueening() {
+void ChessBoard::CheckQueening(){
 	for (int x = 0; x < BOARD_SIZE; x++)
 	{
 		if (board[x][7]->get_piece() == PAWN_W) {
@@ -90,7 +117,7 @@ void ChessBoard::CheckQueening() {
 	}
 }
 
-void ChessBoard::get_valid_moves(bool is_white, std::vector<Move> &moves) {
+void ChessBoard::get_valid_moves(bool is_white, std::vector<GameMove> &moves) const {
 	for (int x = 0; x < BOARD_SIZE; x++)
 	{
 		for (int y = 0; y < BOARD_SIZE; y++)
@@ -104,14 +131,18 @@ void ChessBoard::get_valid_moves(bool is_white, std::vector<Move> &moves) {
 			bool our_piece = (our_piece1 == our_piece2);
 			if (our_piece)
 			{
-				std::vector<Move> piece_valid_moves = cur_piece->get_valid_moves(this);
-				moves.insert(moves.end(), piece_valid_moves.begin(), piece_valid_moves.end());
+
+				std::vector<Piece::PieceMove> piece_valid_moves = cur_piece->get_valid_moves(this);
+				
+				for (auto piece_move : piece_valid_moves) {
+					moves.push_back (GameMove(cur_piece, cur_piece->getx(), cur_piece->gety(), get(piece_move.x, piece_move.y), piece_move.x, piece_move.y));
+				}
 			}
 		}
 	}
 }
 
-bool ChessBoard::get_game_over()
+bool ChessBoard::get_game_over() const
 {
 	bool found_b_king = false;
 	bool found_w_king = false;
@@ -133,7 +164,45 @@ bool ChessBoard::get_game_over()
 	return true;
 }
 
-void ChessBoard::get_board(std::string (*board_str)[BOARD_SIZE][BOARD_SIZE])
+bool ChessBoard::get_winner_white() const
+{
+	bool found_b_king = false;
+	bool found_w_king = false;
+	for (int x = 0; x < BOARD_SIZE; x++)
+	{
+		for (int y = 0; y < BOARD_SIZE; y++)
+		{
+			if (get(x, y)->get_piece() == KING_B) {
+				found_b_king = true;
+			}
+			if (get(x, y)->get_piece() == KING_W) {
+				found_w_king = true;
+			}
+		}
+	}
+	return found_w_king && !found_b_king;
+}
+
+bool ChessBoard::get_winner_black() const
+{
+	bool found_b_king = false;
+	bool found_w_king = false;
+	for (int x = 0; x < BOARD_SIZE; x++)
+	{
+		for (int y = 0; y < BOARD_SIZE; y++)
+		{
+			if (get(x, y)->get_piece() == KING_B) {
+				found_b_king = true;
+			}
+			if (get(x, y)->get_piece() == KING_W) {
+				found_w_king = true;
+			}
+		}
+	}
+	return !found_w_king && found_b_king;
+}
+
+void ChessBoard::get_board(std::string (*board_str)[BOARD_SIZE][BOARD_SIZE]) const
 {
     for (int x = 0; x < BOARD_SIZE; x++)
     {
@@ -141,28 +210,6 @@ void ChessBoard::get_board(std::string (*board_str)[BOARD_SIZE][BOARD_SIZE])
         {
             (*board_str)[x][y] = get(x, y)->get_piece();
         }
-    }
-}
-
-void ChessBoard::print_board()
-{
- 
-    for (int y = BOARD_SIZE-1; y >= 0; y--)
-    {
-		for (int x = 0; x < BOARD_SIZE; x++)
-		{
-			Piece* piece = get(x, y);
-			std::string piece_str;
-			if (piece->is_empty()) {
-				piece_str = " ";
-			}
-			else{
-				piece_str = get(x, y)->get_piece();
-			}
-			printf("%*s", 2, piece_str.c_str());
-            
-        }
-		std::cout << std::endl;
     }
 }
 
@@ -176,25 +223,6 @@ bool replaceAll(std::string &s, const std::string &search, const std::string &re
 		s.insert(pos, replace);
 	}
 	return false;
-}
-
-std::string ChessBoard::print_board_list() {
-	std::string ret;
-	for (int y = BOARD_SIZE - 1; y >= 0; y--)
-	{
-		for (int x = 0; x < BOARD_SIZE; x++)
-		{
-			if (get(x, y)->is_empty()) {
-				ret.append(" ,");
-			}
-			else {
-				ret.append(get(x, y)->get_piece() + ",");
-			}
-			
-		}
-	}
-	ret.pop_back();
-	return ret;
 }
 
 json ChessBoard::get_board_json() {
@@ -211,90 +239,4 @@ json ChessBoard::get_board_json() {
 	ret = json(board_list);
 
 	return ret;
-}
-
-void ChessBoard::print_board_file() {
-	/*
-	std::ifstream f("chess_sample.html");
-	std::string chessboard_str((std::istreambuf_iterator<char>(f)),
-		std::istreambuf_iterator<char>());
-	std::string chessboard = "<!--CHESSBOARD-->";
-	bool black = false;
-	for (int y = BOARD_SIZE - 1; y >= 0; y--)
-	{
-		for (int x = 0; x < BOARD_SIZE; x++)
-		{
-
-			Piece* piece = get(x, y);
-			std::string type;
-			if (piece->is_empty()) {
-				type = " ";
-			}
-			else {
-				type = get(x, y)->get_piece();
-			}
-			std::string cur_piece;
-			if (type == KNIGHT_B)
-			{
-				cur_piece = "&#9822;";
-			}
-			if (type == KNIGHT_W)
-			{
-				cur_piece = "&#9816;";
-			}
-			if (type == PAWN_B)
-			{
-				cur_piece = "&#9823;";
-			}
-			if (type == PAWN_W)
-			{
-				cur_piece = "&#9817;";
-			}
-			if (type == KING_B)
-			{
-				cur_piece = "&#9818;";
-			}
-			if (type == KING_W)
-			{
-				cur_piece = "&#9812;";
-			}
-			if (type == ROOK_B)
-			{
-				cur_piece = "&#9820;";
-			}
-			if (type == ROOK_W)
-			{
-				cur_piece = "&#9814;";
-			}
-			if (type == BISHOP_B)
-			{
-				cur_piece = "&#9821;";
-			}
-			if (type == BISHOP_W)
-			{
-				cur_piece = "&#9815;";
-			}
-			if (type == QUEEN_B)
-			{
-				cur_piece = "&#9819;";
-			}
-			if (type == QUEEN_W)
-			{
-				cur_piece = "&#9813;";
-			}
-			if (type == "") {
-				cur_piece = " ";
-			}
-			std::string color = (black ? "black" : "white");
-			chessboard.append("<div class=\"" + color + "\">" + cur_piece + "</div>");
-
-			black = !black;
-
-		}
-		black = !black;
-	}
-	replaceAll(chessboard_str, "<!--CHESSBOARD-->", chessboard);
-	std::ofstream of("chess.html");
-	of << chessboard_str;
-	*/
 }

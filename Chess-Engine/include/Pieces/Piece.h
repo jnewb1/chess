@@ -1,7 +1,7 @@
 #pragma once
-#include "../ChessBoard/ChessBoard.h"
-#include "../Players/Player.h"
+class ChessBoard;
 
+#include <array>
 #include <vector>
 #include <algorithm>
 #include <cctype>
@@ -20,7 +20,6 @@
 #define ROOK_B "r"
 #define PAWN_B "p"
 
-class ChessBoard;
 
 template <typename T> int sgn(T val) {
 	return (T(0) < val) - (val < T(0));
@@ -30,19 +29,23 @@ template <typename T> int sgn(T val) {
 class Piece
 {
 public:
+	struct PieceMove {
+		int x;
+		int y;
+	};
 	Piece(std::string piece_in, int x_in, int y_in, int eval_val_in) : piece(piece_in), x(x_in), y(y_in), eval_value(eval_val_in) {}
 	~Piece() {};
 
 	// Invalid Moves for All Pieces
-	bool invalid_move_all(const Move move, const ChessBoard *board) const;
+	bool invalid_move_all(const PieceMove move, const ChessBoard *board) const;
 
-	bool invalid_move_no_hop(const Move move, const ChessBoard *board) const;
+	bool invalid_move_no_hop(const PieceMove move, const ChessBoard *board) const;
 
 	// Invalid Moves for Most Pieces
-	bool invalid_move_most(const Move move, const ChessBoard *board) const;
+	bool invalid_move_most(const PieceMove move, const ChessBoard *board) const;
 
 	// An override if the move is not legal for all pieces but is legal for this piece
-	virtual bool invalid_move(const Move move, const ChessBoard *board) const = 0;
+	virtual bool invalid_move(const PieceMove move, const ChessBoard *board) const = 0;
 
 	bool is_white() const
 	{
@@ -85,13 +88,15 @@ public:
 		return this->y;
 	}
   // Get a list of all valid moves this piece could make.
-  std::vector<Move> get_valid_moves(const ChessBoard *board) const;
+  std::vector<PieceMove> get_valid_moves(const ChessBoard *board) const;
 
   // Get a list of possible moves this piece could make (not neccesarily valid, ex outside of board bounds)
-  virtual std::vector<Move> get_possible_moves() const = 0;
+  virtual std::vector<PieceMove> get_possible_moves() const = 0;
+
+private:
 
 protected:
-  std::string piece = "";
+	std::string piece;
   int x;
   int y;
   int eval_value = 0;
