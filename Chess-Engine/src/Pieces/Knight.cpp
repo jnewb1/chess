@@ -1,7 +1,7 @@
 #include "Pieces/Knight.h"
 #include "ChessBoard\ChessBoard.h"
 
-Knight::Knight(bool is_white, int x, int y) : Piece(is_white ? KNIGHT_W : KNIGHT_B, x, y, 30)
+Knight::Knight(bool is_white, int x, int y) : Piece(is_white ? knight_w : knight_b, x, y, 30)
 {
 	pos_value = {
 		{
@@ -17,7 +17,7 @@ Knight::Knight(bool is_white, int x, int y) : Piece(is_white ? KNIGHT_W : KNIGHT
 		};
 }
 
-bool Knight::invalid_move(const PieceMove move, const ChessBoard *board)  const
+bool Knight::invalid_move(const PieceMove move, const ChessBoard &board)  const
 {
     return invalid_move_most(move, board);
 }

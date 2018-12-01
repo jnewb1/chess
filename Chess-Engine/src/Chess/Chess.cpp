@@ -1,4 +1,4 @@
-#include "Chess.h"
+#include "Chess/Chess.h"
 
 #include <iostream>
 #include <chrono>
@@ -17,13 +17,13 @@ bool Chess::play_one_round()
 {
 	Move move;
 	std::string board_str[BOARD_SIZE][BOARD_SIZE];
-	UpdateServer();
+	GameStateUpdate();
 	do {
 		cout << "White Player" << endl;
 		board->get_board(&board_str);
 		move = white->request_move(board_str);
 	} while (!preform_move(move, true));
-	UpdateServer();
+	GameStateUpdate();
 	if (board->get_game_over()) {
 		return true;
 	}
@@ -33,7 +33,7 @@ bool Chess::play_one_round()
 		board->get_board(&board_str);
 		move = black->request_move(board_str);
 	} while (!preform_move(move, false));
-	UpdateServer();
+	GameStateUpdate();
 	if (board->get_game_over()) {
 		return true;
 	}
@@ -42,11 +42,11 @@ bool Chess::play_one_round()
 	return false;
 }
 
-void Chess::UpdateServer() {
-	server.UpdateBoard(board);
-	server.UpdateDebug(black->get_player_debug(), false);
-	server.UpdateDebug(white->get_player_debug(), true);
-	server.WaitState(delay);
+void Chess::GameStateUpdate() {
+	board_state = *board;
+	black_debug = black->get_player_debug();
+	white_debug = white->get_player_debug();
+	on_update();
 }
 
 bool Chess::preform_move(Move move, bool is_white) {
@@ -69,7 +69,7 @@ bool Chess::preform_move(GameMove move , bool is_white)
 }
 
 void Chess::play_game() {
-	UpdateServer();
+	GameStateUpdate();
 	while(true) {
 		if (play_one_round()) {
 			cout << "Game Over" << endl;

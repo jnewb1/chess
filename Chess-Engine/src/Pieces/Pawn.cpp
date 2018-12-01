@@ -1,7 +1,7 @@
 #include "Pieces/Pawn.h"
 #include "ChessBoard\ChessBoard.h"
 
-Pawn::Pawn(bool is_white, int x, int y) : Piece(is_white ? PAWN_W : PAWN_B, x, y, 10)
+Pawn::Pawn(bool is_white, int x, int y) : Piece(is_white ? pawn_w : pawn_b, x, y, 10)
 {
 	pos_value = { {
 		{0,  0,  0,  0,  0,  0,  0,  0},
@@ -15,7 +15,7 @@ Pawn::Pawn(bool is_white, int x, int y) : Piece(is_white ? PAWN_W : PAWN_B, x, y
 } };
 }
 
-bool Pawn::invalid_move(const PieceMove move, const ChessBoard *board) const
+bool Pawn::invalid_move(const PieceMove move, const ChessBoard &board) const
 {
 	bool invalid = invalid_move_all(move, board);
 	if (invalid) {
@@ -23,13 +23,13 @@ bool Pawn::invalid_move(const PieceMove move, const ChessBoard *board) const
 	}
 	if (x != move.x) {
 		// If pawn tries to attack diagonally, there has to be a piece there
-		if (board->get(move.x, move.y)->is_empty()) {
+		if (board.get(move.x, move.y)->is_empty()) {
 			return true;
 		}
 	}
 	else {
 		// If pawn tries to move forward, there cannot be a piece there
-		if (!board->get(move.x, move.y)->is_empty()) {
+		if (!board.get(move.x, move.y)->is_empty()) {
 			return true;
 		}
 	}

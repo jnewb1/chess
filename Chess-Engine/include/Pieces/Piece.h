@@ -6,19 +6,24 @@ class ChessBoard;
 #include <algorithm>
 #include <cctype>
 
-#define KING_W "K"
-#define QUEEN_W "Q"
-#define BISHOP_W "B"
-#define KNIGHT_W "KN"
-#define ROOK_W "R"
-#define PAWN_W "P"
+const enum pieces {
+	king_w   = 'K',
+	queen_w  = 'Q',
+	bishop_w = 'B',
+	knight_w = 'N',
+	rook_w   = 'R',
+	pawn_w   = 'P',
 
-#define KING_B "k"
-#define QUEEN_B "q"
-#define BISHOP_B "b"
-#define KNIGHT_B "kn"
-#define ROOK_B "r"
-#define PAWN_B "p"
+	king_b   = 'k',
+	queen_b  = 'q',
+	bishop_b = 'b',
+	knight_b = 'n',
+	rook_b   = 'r',
+	pawn_b   = 'p',
+	empty    = ' '
+};
+
+
 
 
 template <typename T> int sgn(T val) {
@@ -33,34 +38,34 @@ public:
 		int x;
 		int y;
 	};
-	Piece(std::string piece_in, int x_in, int y_in, int eval_val_in) : piece(piece_in), x(x_in), y(y_in), eval_value(eval_val_in) {}
+	Piece(char piece_in, int x_in, int y_in, int eval_val_in) : piece(piece_in), x(x_in), y(y_in), eval_value(eval_val_in) {}
 	~Piece() {};
 
 	// Invalid Moves for All Pieces
-	bool invalid_move_all(const PieceMove move, const ChessBoard *board) const;
+	bool invalid_move_all(const PieceMove move, const ChessBoard &board) const;
 
-	bool invalid_move_no_hop(const PieceMove move, const ChessBoard *board) const;
+	bool invalid_move_no_hop(const PieceMove move, const ChessBoard &board) const;
 
 	// Invalid Moves for Most Pieces
-	bool invalid_move_most(const PieceMove move, const ChessBoard *board) const;
+	bool invalid_move_most(const PieceMove move, const ChessBoard &board) const;
 
 	// An override if the move is not legal for all pieces but is legal for this piece
-	virtual bool invalid_move(const PieceMove move, const ChessBoard *board) const = 0;
+	virtual bool invalid_move(const PieceMove move, const ChessBoard &board) const = 0;
 
 	bool is_white() const
 	{
-		bool white = std::isupper(piece[0]);
+		bool white = std::isupper(piece);
 		return white;
 	}
 
 	bool is_empty() const {
-		if (piece == "") {
+		if (piece == ' ') {
 			return true;
 		}
 		return false;
 	}
 
-	std::string get_piece() const
+	char get_piece() const
 	{
 		return piece;
 	}
@@ -88,7 +93,7 @@ public:
 		return this->y;
 	}
   // Get a list of all valid moves this piece could make.
-  std::vector<PieceMove> get_valid_moves(const ChessBoard *board) const;
+  std::vector<PieceMove> get_valid_moves(const ChessBoard &board) const;
 
   // Get a list of possible moves this piece could make (not neccesarily valid, ex outside of board bounds)
   virtual std::vector<PieceMove> get_possible_moves() const = 0;
@@ -96,7 +101,7 @@ public:
 private:
 
 protected:
-	std::string piece;
+	char piece;
   int x;
   int y;
   int eval_value = 0;

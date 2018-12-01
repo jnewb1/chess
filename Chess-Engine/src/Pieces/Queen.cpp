@@ -1,7 +1,7 @@
 #include "Pieces/Queen.h"
 #include "ChessBoard\ChessBoard.h"
 
-Queen::Queen(bool is_white, int x, int y) : Piece(is_white ? QUEEN_W : QUEEN_B, x, y, 90)
+Queen::Queen(bool is_white, int x, int y) : Piece(is_white ? queen_w : queen_b, x, y, 90)
 {
 	pos_value = { {
 				{-2, -1, -1, -0.5, -0.5, -1, -1, -2},
@@ -16,7 +16,7 @@ Queen::Queen(bool is_white, int x, int y) : Piece(is_white ? QUEEN_W : QUEEN_B, 
 } };
 }
 
-bool Queen::invalid_move(const PieceMove move, const ChessBoard *board)  const
+bool Queen::invalid_move(const PieceMove move, const ChessBoard &board)  const
 {
 	return invalid_move_all(move, board);
 }

@@ -2,7 +2,7 @@
 #include "ChessBoard/ChessBoard.h"
 
 // Moves that are invalid for all pieces
-bool Piece::invalid_move_all(const PieceMove move, const ChessBoard *board) const
+bool Piece::invalid_move_all(const PieceMove move, const ChessBoard &board) const
 {
 
 	if (invalid_move_most(move, board)) {
@@ -16,7 +16,7 @@ bool Piece::invalid_move_all(const PieceMove move, const ChessBoard *board) cons
     return false;
 }
 
-bool Piece::invalid_move_no_hop(const PieceMove move, const ChessBoard *board) const{
+bool Piece::invalid_move_no_hop(const PieceMove move, const ChessBoard &board) const{
 	// cannot move over non empty squares
 	// TODO: This logic does not work entirely correctly!
 	int xdir = -sgn(x - move.x);
@@ -24,7 +24,7 @@ bool Piece::invalid_move_no_hop(const PieceMove move, const ChessBoard *board) c
 	int x1 = x + xdir;
 	int y1 = y + ydir;
 	while(x1 != move.x || y1 != move.y) {
-		if (!(board->get(x1, y1)->is_empty())) {
+		if (!(board.get(x1, y1)->is_empty())) {
 			return true;
 		}
 		x1 += xdir;
@@ -34,7 +34,7 @@ bool Piece::invalid_move_no_hop(const PieceMove move, const ChessBoard *board) c
 }
 
 // Moves that are invalid for most pieces.
-bool Piece::invalid_move_most(const PieceMove move, const ChessBoard *board) const
+bool Piece::invalid_move_most(const PieceMove move, const ChessBoard &board) const
 {
 	// If move is outside board, it isn't valid
 	if (move.x >= BOARD_SIZE || move.x < 0 || move.y >= BOARD_SIZE || move.y < 0)
@@ -49,8 +49,8 @@ bool Piece::invalid_move_most(const PieceMove move, const ChessBoard *board) con
 
 
 	// If move lands on our own piece, it isn't valid
-	if (!board->get(move.x, move.y)->is_empty()) {
-		if ((int)board->get(move.x, move.y)->is_white() == (int)this->is_white())
+	if (!board.get(move.x, move.y)->is_empty()) {
+		if ((int)board.get(move.x, move.y)->is_white() == (int)this->is_white())
 		{
 			return true;
 		}
@@ -61,10 +61,10 @@ bool Piece::invalid_move_most(const PieceMove move, const ChessBoard *board) con
     return false;
 }
 
-std::vector<Piece::PieceMove> Piece::get_valid_moves(const ChessBoard *board) const
+std::vector<Piece::PieceMove> Piece::get_valid_moves(const ChessBoard &board) const
 {
     std::vector<PieceMove> moves = get_possible_moves();
-	auto iterator = std::remove_if(moves.begin(), moves.end(), [this, board](PieceMove move) { return invalid_move(move, board); });
+	auto iterator = std::remove_if(moves.begin(), moves.end(), [this, board](PieceMove &move) { return invalid_move(move, board); });
 	moves.erase(iterator, moves.end());
     return moves;
 }

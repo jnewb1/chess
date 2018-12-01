@@ -39,7 +39,7 @@ void WebPlayer::Event(std::string msg) {
 		int x = recieve["data"]["cur_x"];
 		int y = recieve["data"]["cur_y"];
 
-		std::vector<Piece::PieceMove> pmoves = board.get(x, y)->get_valid_moves(&board);
+		std::vector<Piece::PieceMove> pmoves = board.get(x, y)->get_valid_moves(board);
 		for (auto pmove : pmoves) {
 			moves.push_back(GameMove({ board.get(x, y), x, y, board.get(pmove.x, pmove.y), pmove.x, pmove.y }));
 		}

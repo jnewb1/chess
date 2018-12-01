@@ -26,6 +26,9 @@ public:
 		GameMove(Piece* pi, int xi, int yi, int txi, int tyi) : GameMove(pi, xi, yi, nullptr, txi, tyi) {
 
 		}
+		GameMove(Piece* pi, Piece* tpi) : GameMove(pi, pi->getx(), pi->gety(), tpi, tpi->getx(), tpi->gety()) {
+
+		}
 		GameMove() : GameMove(nullptr, 0, 0, nullptr, 0, 0) {}
 		~GameMove() {
 			if (!undone) {
@@ -33,7 +36,7 @@ public:
 			}
 		}
 
-		bool operator==(const GameMove &rhs){
+		bool operator==(const GameMove& rhs) const{
 			return x == rhs.x && y == rhs.y && tx == rhs.tx && ty == rhs.ty;
 		}
 		int x;
@@ -60,11 +63,12 @@ public:
   ChessBoard(const ChessBoard &board_in);
   ChessBoard& operator=(const ChessBoard& other);
   void set(int x, int y, Piece *set);
+  void set(Piece * set);
   Piece *get(int x, int y) const;
   bool move(GameMove &move);
   bool undo_move(GameMove &move);
   void get_board(std::string (*board_str)[BOARD_SIZE][BOARD_SIZE]) const;
-  json get_board_json();
+  json get_board_json() const;
   void CheckQueening();
   void get_valid_moves(bool is_white, std::vector<GameMove> &moves) const;
   bool get_game_over() const;

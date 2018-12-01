@@ -9,9 +9,6 @@
 
 int evaluate_board(const ChessBoard &board, bool is_white) {
 	double boardValue = 0;
-	if (board.get_game_over()) {
-		return board.get_winner_white() ? 10000000 : -10000000;
-	}
 	for (int x = 0; x < BOARD_SIZE; x++)
 	{
 		for (int y = 0; y < BOARD_SIZE; y++)
@@ -38,18 +35,13 @@ int minimax(int depth, int orig_depth, ChessBoard &board, bool isMaximisingPlaye
 	std::vector<GameMove> moves(0);
 	board.get_valid_moves(isMaximisingPlayer, moves);
 
-	if (moves.size() == 0 && depth == orig_depth) {
-		//No valid moves... we have to quit :(
-		//final_move;
-		return 0;
-	}
-
 	//Maximizing Player
 	if (isMaximisingPlayer) {
 		int bestMoveScore = -1000000;
 		for (auto move : moves) {
 			// Make move and evaluate it
 			board.move(move);
+
 			int score = minimax(depth - 1, orig_depth, board, !isMaximisingPlayer, final_move, alpha, beta, stop);
 			if (score > bestMoveScore) {
 				bestMoveScore = score;
@@ -112,7 +104,7 @@ GameMove AIPlayer::request_move(ChessBoard &board)
 	auto t_start = std::chrono::high_resolution_clock::now();
 
 	GameMove cur_move;
-	int cur_depth = 1;
+	int cur_depth = 2;
 
 	std::atomic_bool quit_thread = false;
 	while(true) {
@@ -132,7 +124,7 @@ GameMove AIPlayer::request_move(ChessBoard &board)
 			best_move_score = move_info.second;
 		}
 
-		cur_depth++;
+		cur_depth+=2;
 		
 	}
 	search_depth = cur_depth;

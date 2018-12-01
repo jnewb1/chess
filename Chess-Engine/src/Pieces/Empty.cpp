@@ -1,11 +1,11 @@
 #include "Pieces/Empty.h"
 #include "ChessBoard\ChessBoard.h"
 
-Empty::Empty(int x, int y) : Piece("", x, y, 0)
+Empty::Empty(int x, int y) : Piece(empty, x, y, 0)
 {
 }
 
-bool Empty::invalid_move(const PieceMove move, const ChessBoard *board)  const
+bool Empty::invalid_move(const PieceMove move, const ChessBoard &board)  const
 {
 	return true;
 }

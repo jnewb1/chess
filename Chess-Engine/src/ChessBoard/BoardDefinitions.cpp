@@ -6,7 +6,7 @@ void board_default(std::string board[BOARD_SIZE][BOARD_SIZE])
 	{
 		for (int y = 0; y < BOARD_SIZE; y++)
 		{
-			board[x][y] = "";
+			board[x][y] = " ";
 		}
 	}
 	

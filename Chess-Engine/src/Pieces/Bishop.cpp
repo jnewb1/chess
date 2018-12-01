@@ -1,7 +1,7 @@
 #include "Pieces/Bishop.h"
 #include "ChessBoard\ChessBoard.h"
 
-Bishop::Bishop(bool is_white, int x, int y) : Piece(is_white ? BISHOP_W : BISHOP_B, x, y, 30)
+Bishop::Bishop(bool is_white, int x, int y) : Piece(is_white ? bishop_w : bishop_b, x, y, 30)
 {
 	pos_value = {
 		{
@@ -17,7 +17,7 @@ Bishop::Bishop(bool is_white, int x, int y) : Piece(is_white ? BISHOP_W : BISHOP
 	};
 }
 
-bool Bishop::invalid_move(const PieceMove move, const ChessBoard *board) const
+bool Bishop::invalid_move(const PieceMove move, const ChessBoard &board) const
 {
     return invalid_move_all(move, board);
 }

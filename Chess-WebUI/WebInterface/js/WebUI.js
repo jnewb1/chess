@@ -9,7 +9,7 @@ function GetChessCharacter(char_in) {
         case "B": 
             return "\u2657";
             break;
-        case "KN": 
+        case "N": 
             return "\u2658";
             break;
         case "R":
@@ -28,7 +28,7 @@ function GetChessCharacter(char_in) {
         case "b":
             return "\u265D";
             break;
-        case "kn": 
+        case "n": 
             return "\u265E";
             break;
         case "r": 

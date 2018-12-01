@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="src\ChessBoard\BoardDefinitions.cpp" />
     <ClCompile Include="src\ChessBoard\ChessBoard.cpp" />
+    <ClCompile Include="src\Chess\Chess.cpp" />
     <ClCompile Include="src\Pieces\Bishop.cpp" />
     <ClCompile Include="src\Pieces\Empty.cpp" />
     <ClCompile Include="src\Pieces\King.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="src\Players\WebPlayer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Chess\Chess.h" />
     <ClInclude Include="include\ChessBoard\BoardDefinitions.h" />
     <ClInclude Include="include\ChessBoard\ChessBoard.h" />
     <ClInclude Include="include\JSON\json.hpp" />

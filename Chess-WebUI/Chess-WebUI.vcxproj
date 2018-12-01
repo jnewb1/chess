@@ -119,13 +119,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Chess\Chess.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameServer.cpp" />
+    <ClCompile Include="ChessWebUI.cpp" />
+    <ClCompile Include="WebUIServer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Chess\Chess.h" />
-    <ClInclude Include="GameServer.h" />
+    <ClInclude Include="WebUIServer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="WebInterface\index.html" />

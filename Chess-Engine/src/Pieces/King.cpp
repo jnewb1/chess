@@ -1,7 +1,7 @@
 #include "Pieces/King.h"
 #include "ChessBoard\ChessBoard.h"
 
-King::King(bool is_white, int x, int y) : Piece(is_white ? KING_W : KING_B, x, y, 9000)
+King::King(bool is_white, int x, int y) : Piece(is_white ?  king_w : king_b, x, y, 9000)
 {
 	pos_value = { {
 
@@ -16,7 +16,7 @@ King::King(bool is_white, int x, int y) : Piece(is_white ? KING_W : KING_B, x, y
 } };
 }
 
-bool King::invalid_move(const PieceMove move, const ChessBoard *board)  const
+bool King::invalid_move(const PieceMove move, const ChessBoard &board)  const
 {
     return invalid_move_all(move, board);
 }

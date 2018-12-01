@@ -1,7 +1,7 @@
 #include "Pieces/Rook.h"
 #include "ChessBoard\ChessBoard.h"
 
-Rook::Rook(bool is_white, int x, int y) : Piece(is_white ? ROOK_W : ROOK_B, x, y, 50)
+Rook::Rook(bool is_white, int x, int y) : Piece(is_white ? rook_w : rook_b, x, y, 50)
 {
 	pos_value = { {
 				{0,  0,  0,  0,  0,  0,  0,  0},
@@ -16,7 +16,7 @@ Rook::Rook(bool is_white, int x, int y) : Piece(is_white ? ROOK_W : ROOK_B, x, y
 } };
 }
 
-bool Rook::invalid_move(const PieceMove move, const ChessBoard *board)  const
+bool Rook::invalid_move(const PieceMove move, const ChessBoard &board)  const
 {
     return invalid_move_all(move, board);
 }

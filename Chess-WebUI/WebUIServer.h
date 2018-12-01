@@ -4,20 +4,20 @@
 #include <string>
 #include <mutex>
 
-class GameServer {
+class WebUIServer {
 public:
-	GameServer();
-	~GameServer();
+	WebUIServer();
+	~WebUIServer();
 
-	void UpdateBoard(ChessBoard* board_in);
+	void UpdateBoard(const ChessBoard& board_in);
 	void UpdateClientsBoard();
-	void UpdateDebug(json debug, bool is_white);
+	void UpdateDebug(const json &debug, bool is_white);
 	void UpdateClientsDebug();
 	void WaitState(int min_delay);
 
 	void Event(std::string);
 private:
-	ChessBoard *board;
+	const ChessBoard *board;
 	WebSocketServer *wss;
 	WebServer *ws;
 

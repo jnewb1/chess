@@ -38,7 +38,7 @@ ChessBoard::ChessBoard()
         for (int y = 0; y < BOARD_SIZE; y++)
         {
             
-            board[x][y] = factory.Create("", x, y);
+            board[x][y] = factory.Create(empty, x, y);
         }
     }
 }
@@ -69,6 +69,11 @@ void ChessBoard::set(int x, int y, Piece *set)
     board[x][y] = set;
 }
 
+void ChessBoard::set(Piece *set)
+{
+	this->set(set->getx(), set->gety(), set);
+}
+
 Piece *ChessBoard::get(int x, int y) const
 {
 	return board[x][y];
@@ -78,7 +83,7 @@ Piece *ChessBoard::get(int x, int y) const
 		- Moves a piece to its new position
 */
 bool ChessBoard::move(GameMove &move) {
-	set(move.x, move.y, factory.Create("", move.x, move.y));
+	set(move.x, move.y, factory.Create(empty, move.x, move.y));
 	set(move.tx, move.ty, move.p);
 	move.p->set(move.tx, move.ty);
 	CheckQueening();
@@ -107,10 +112,10 @@ bool ChessBoard::undo_move(GameMove &move)
 void ChessBoard::CheckQueening(){
 	for (int x = 0; x < BOARD_SIZE; x++)
 	{
-		if (board[x][7]->get_piece() == PAWN_W) {
+		if (board[x][7]->get_piece() == pawn_w) {
 			set(x, 7, new Queen(true, x, 7));
 		}
-		if (board[x][0]->get_piece() == PAWN_B) {
+		if (board[x][0]->get_piece() == pawn_b) {
 			set(x, 0, new Queen(false, x, 0));
 		}
 		
@@ -118,6 +123,9 @@ void ChessBoard::CheckQueening(){
 }
 
 void ChessBoard::get_valid_moves(bool is_white, std::vector<GameMove> &moves) const {
+	if (get_game_over()) {
+		return;
+	}
 	for (int x = 0; x < BOARD_SIZE; x++)
 	{
 		for (int y = 0; y < BOARD_SIZE; y++)
@@ -132,7 +140,7 @@ void ChessBoard::get_valid_moves(bool is_white, std::vector<GameMove> &moves) co
 			if (our_piece)
 			{
 
-				std::vector<Piece::PieceMove> piece_valid_moves = cur_piece->get_valid_moves(this);
+				std::vector<Piece::PieceMove> piece_valid_moves = cur_piece->get_valid_moves(*this);
 				
 				for (auto piece_move : piece_valid_moves) {
 					moves.push_back (GameMove(cur_piece, cur_piece->getx(), cur_piece->gety(), get(piece_move.x, piece_move.y), piece_move.x, piece_move.y));
@@ -150,10 +158,10 @@ bool ChessBoard::get_game_over() const
 	{
 		for (int y = 0; y < BOARD_SIZE; y++)
 		{
-			if (get(x, y)->get_piece() == KING_B) {
+			if (get(x, y)->get_piece() == king_b) {
 				found_b_king = true;
 			}
-			if (get(x, y)->get_piece() == KING_W) {
+			if (get(x, y)->get_piece() == king_w) {
 				found_w_king = true;
 			}
 			if (found_b_king && found_w_king) {
@@ -172,10 +180,10 @@ bool ChessBoard::get_winner_white() const
 	{
 		for (int y = 0; y < BOARD_SIZE; y++)
 		{
-			if (get(x, y)->get_piece() == KING_B) {
+			if (get(x, y)->get_piece() == king_b) {
 				found_b_king = true;
 			}
-			if (get(x, y)->get_piece() == KING_W) {
+			if (get(x, y)->get_piece() == king_w) {
 				found_w_king = true;
 			}
 		}
@@ -191,10 +199,10 @@ bool ChessBoard::get_winner_black() const
 	{
 		for (int y = 0; y < BOARD_SIZE; y++)
 		{
-			if (get(x, y)->get_piece() == KING_B) {
+			if (get(x, y)->get_piece() == king_b) {
 				found_b_king = true;
 			}
-			if (get(x, y)->get_piece() == KING_W) {
+			if (get(x, y)->get_piece() == king_w) {
 				found_w_king = true;
 			}
 		}
@@ -225,7 +233,7 @@ bool replaceAll(std::string &s, const std::string &search, const std::string &re
 	return false;
 }
 
-json ChessBoard::get_board_json() {
+json ChessBoard::get_board_json() const {
 	json ret;
 	std::vector<std::string> board_list;
 	ret["type"] = "board";
@@ -233,7 +241,7 @@ json ChessBoard::get_board_json() {
 	{
 		for (int x = 0; x < BOARD_SIZE; x++)
 		{
-			board_list.push_back(board[x][y]->get_piece());
+			board_list.push_back(std::string(1, board[x][y]->get_piece()));
 		}
 	}
 	ret = json(board_list);
